@@ -80,21 +80,16 @@ EmailLab/
 ### Реализация в коде
 
 ```csharp
-public sealed class EmailClient
-{
+public sealed class EmailClient {
     private static EmailClient singleInstance;
     private static readonly object threadLock = new object();
 
     private EmailClient() { }
 
-    public static EmailClient GetInstance()
-    {
-        if (singleInstance == null)
-        {
-            lock (threadLock)
-            {
-                if (singleInstance == null)
-                {
+    public static EmailClient GetInstance() {
+        if (singleInstance == null) {
+            lock (threadLock) {
+                if (singleInstance == null) {
                     singleInstance = new EmailClient();
                 }
             }
@@ -200,6 +195,8 @@ Inbox: 4 (Unread: 2)
 Sent: 3
 ``` 
 
+---
+
 ## История разработки (GitHub Flow)
 
 Разработка велась по этапам в отдельных ветках с коммитами:
@@ -217,6 +214,7 @@ Sent: 3
 | 9 | Рефакторинг: разделение на `Services` и `UI` |
 | 10 | Финальная документация (`README.md`) |
 
+--- 
 
 Использование ИИ:
 
@@ -224,3 +222,7 @@ Deepseek:
 Помогал в объяснении кода и разборе его на ошибки.
 Объяснял какие ошибки можно исправить для производительности.
 Помог разделить проект на подзадачи для того, чтобы все выполнялось по порядку.
+
+--- 
+
+Видео - отчет о работе (https://drive.google.com/file/d/1nifx1xJd34rzHdTkCxGQzpdT_m-eJQIQ/view?usp=drive_link) 
