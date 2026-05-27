@@ -1,97 +1,168 @@
 ﻿using System;
+using EmailLab.Services;
 
 namespace EmailLab {
-  class Program {
-    private static void Main() {
-      Console.Title = "Почтовый клиент - Singleton Pattern";
+  public static class Program {
+    public static void Main() {
+      Console.Title = "Email Client - Singleton Pattern";
       Console.ForegroundColor = ConsoleColor.Cyan;
       Console.WriteLine("=========================================");
-      Console.WriteLine("   ПОЧТОВЫЙ КЛИЕНТ (Singleton Pattern)");
+      Console.WriteLine("         EMAIL CLIENT v1.0");
+      Console.WriteLine("         Singleton Pattern");
       Console.WriteLine("=========================================");
       Console.ResetColor();
 
-      EmailClient mailClient = EmailClient.GetInstance();
+      EmailClient client = EmailClient.GetInstance();
 
-      Console.Write("\nВведите ваш email: ");
+      Console.Write("\nEnter your email: ");
       string userEmail = Console.ReadLine();
-      mailClient.SetUserEmail(userEmail);
+      client.SetUserEmail(userEmail);
 
-      bool shouldExitProgram = false;
+      Console.Clear();
+      ShowWelcomeMessage(userEmail);
 
-      while (!shouldExitProgram) {
-        DisplayMainMenu();
-        string userChoice = Console.ReadLine();
-        Console.WriteLine();
+      bool exit = false;
 
-        if (userChoice == "1") {
-          ProcessSendEmail(mailClient);
-        } else if (userChoice == "2") {
-          mailClient.ReceiveNewEmails();
-        } else if (userChoice == "3") {
-          mailClient.DisplayInbox();
-        } else if (userChoice == "4") {
-          mailClient.DisplaySentEmails();
-        } else if (userChoice == "5") {
-          ProcessMarkEmailAsRead(mailClient);
-        } else if (userChoice == "6") {
-          mailClient.DisplayStatistics();
-        } else if (userChoice == "0") {
-          shouldExitProgram = true;
-          Console.ForegroundColor = ConsoleColor.Green;
-          Console.WriteLine("До свидания!");
-          Console.ResetColor();
+      while (!exit) {
+        DisplayMenu();
+        string choice = Console.ReadLine();
+
+        if (choice == "1") {
+          SendEmailFlow(client);
+        } else if (choice == "2") {
+          ReceiveEmailsFlow(client);
+        } else if (choice == "3") {
+          client.DisplayInbox();
+        } else if (choice == "4") {
+          client.DisplaySentEmails();
+        } else if (choice == "5") {
+          MarkAsReadFlow(client);
+        } else if (choice == "6") {
+          client.DisplayStatistics();
+        } else if (choice == "0") {
+          exit = true;
+          ShowExitMessage();
         } else {
-          Console.ForegroundColor = ConsoleColor.Red;
-          Console.WriteLine("Неверный выбор! Пожалуйста, попробуйте снова.");
-          Console.ResetColor();
+          ShowErrorMessage("Invalid choice! Please try again.");
         }
 
-        if (!shouldExitProgram) {
+        if (!exit) {
           Console.ForegroundColor = ConsoleColor.DarkGray;
-          Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+          Console.WriteLine("\nPress any key to continue...");
           Console.ResetColor();
-          _ = Console.ReadKey();
+          Console.ReadKey();
+          Console.Clear();
         }
       }
     }
 
-    private static void DisplayMainMenu() {
-      Console.ForegroundColor = ConsoleColor.Yellow;
-      Console.WriteLine("\n" + new string('-', 50));
-      Console.WriteLine("МЕНЮ ПОЧТОВОГО КЛИЕНТА");
-      Console.WriteLine(new string('-', 50));
+    private static void ShowWelcomeMessage(string email) {
+      Console.ForegroundColor = ConsoleColor.Green;
+      Console.WriteLine("\nWelcome, {0}!", email);
+      Console.WriteLine("Email client successfully started");
       Console.ResetColor();
-      Console.WriteLine("1. Отправить письмо");
-      Console.WriteLine("2. Получить новые письма");
-      Console.WriteLine("3. Просмотреть входящие");
-      Console.WriteLine("4. Просмотреть отправленные");
-      Console.WriteLine("5. Отметить письмо как прочитанное");
-      Console.WriteLine("6. Показать статистику");
-      Console.WriteLine("0. Выход");
-      Console.Write("\nВыберите опцию: ");
+      Console.WriteLine("\nPress any key to continue...");
+      Console.ReadKey();
+      Console.Clear();
     }
 
-    private static void ProcessSendEmail(EmailClient mailClient) {
-      Console.Write("Кому: ");
-      string recipientAddress = Console.ReadLine();
-
-      Console.Write("Тема: ");
-      string emailSubject = Console.ReadLine();
-
-      Console.Write("Содержание: ");
-      string emailBody = Console.ReadLine();
-
-      _ = mailClient.SendEmail(recipientAddress, emailSubject, emailBody);
+    private static void ShowExitMessage() {
+      Console.Clear();
+      Console.ForegroundColor = ConsoleColor.Green;
+      Console.WriteLine("=========================================");
+      Console.WriteLine("              Goodbye!");
+      Console.WriteLine("         Thanks for using");
+      Console.WriteLine("=========================================");
+      Console.ResetColor();
+      Console.WriteLine("\nPress any key to exit...");
+      Console.ReadKey();
     }
 
-    private static void ProcessMarkEmailAsRead(EmailClient mailClient) {
-      Console.Write("Введите номер письма для отметки как прочитанное: ");
-      string userInput = Console.ReadLine();
+    private static void ShowErrorMessage(string message) {
+      Console.ForegroundColor = ConsoleColor.Red;
+      Console.WriteLine("\nError: {0}", message);
+      Console.ResetColor();
+    }
 
-      if (int.TryParse(userInput, out int emailNumber)) {
-        mailClient.MarkEmailAsRead(emailNumber);
+    private static void ShowSuccessMessage(string message) {
+      Console.ForegroundColor = ConsoleColor.Green;
+      Console.WriteLine("\n{0}", message);
+      Console.ResetColor();
+    }
+
+    private static void DisplayMenu() {
+      Console.ForegroundColor = ConsoleColor.Yellow;
+      Console.WriteLine("\n+--------------------------------------------------+");
+      Console.WriteLine("|                   MAIN MENU                      |");
+      Console.WriteLine("+--------------------------------------------------+");
+      Console.ResetColor();
+      Console.WriteLine("| 1. Send email                                    |");
+      Console.WriteLine("| 2. Receive new emails                            |");
+      Console.WriteLine("| 3. View inbox                                    |");
+      Console.WriteLine("| 4. View sent                                     |");
+      Console.WriteLine("| 5. Mark email as read                            |");
+      Console.WriteLine("| 6. Show statistics                               |");
+      Console.ForegroundColor = ConsoleColor.Red;
+      Console.WriteLine("| 0. Exit                                          |");
+      Console.ResetColor();
+      Console.WriteLine("+--------------------------------------------------+");
+      Console.Write("\nChoose option: ");
+    }
+
+    private static void SendEmailFlow(EmailClient client) {
+      Console.Clear();
+      Console.ForegroundColor = ConsoleColor.Cyan;
+      Console.WriteLine("\n=== SEND EMAIL ===");
+      Console.ResetColor();
+
+      Console.Write("To: ");
+      string to = Console.ReadLine();
+
+      if (string.IsNullOrWhiteSpace(to)) {
+        ShowErrorMessage("Recipient address cannot be empty");
+        return;
+      }
+
+      Console.Write("Subject: ");
+      string subject = Console.ReadLine();
+
+      Console.Write("Body: ");
+      string body = Console.ReadLine();
+
+      if (client.SendEmail(to, subject, body)) {
+        ShowSuccessMessage("Email sent successfully!");
+      }
+    }
+
+    private static void ReceiveEmailsFlow(EmailClient client) {
+      Console.Clear();
+      Console.ForegroundColor = ConsoleColor.Cyan;
+      Console.WriteLine("\n=== RECEIVE EMAILS ===");
+      Console.ResetColor();
+
+      client.ReceiveNewEmails();
+
+      Console.ForegroundColor = ConsoleColor.Green;
+      Console.WriteLine("\nMailbox updated successfully");
+      Console.ResetColor();
+    }
+
+    private static void MarkAsReadFlow(EmailClient client) {
+      Console.Clear();
+      Console.ForegroundColor = ConsoleColor.Cyan;
+      Console.WriteLine("\n=== MARK AS READ ===");
+      Console.ResetColor();
+
+      client.DisplayInbox();
+
+      Console.Write("\nEnter email number: ");
+      string input = Console.ReadLine();
+
+      if (int.TryParse(input, out int number)) {
+        client.MarkEmailAsRead(number);
+        ShowSuccessMessage("Email marked as read");
       } else {
-        Console.WriteLine("Неверный номер! Пожалуйста, введите число.");
+        ShowErrorMessage("Enter a valid email number");
       }
     }
   }

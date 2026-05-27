@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EmailLab {
+namespace EmailLab.Models {
   public class Email {
     public string Sender { get; set; }
     public string Recipient { get; set; }
@@ -19,7 +19,14 @@ namespace EmailLab {
     }
 
     public override string ToString() {
-      return $"[Email] From: {Sender}, Subject: {Subject}";
+      return string.Format(
+          "From: {0}\nTo: {1}\nSubject: {2}\nDate: {3:yyyy-MM-dd HH:mm}\n{4}\n{5}",
+          Sender,
+          Recipient,
+          Subject,
+          Timestamp,
+          Body,
+          new string('-', 50));
     }
   }
 }
