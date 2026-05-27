@@ -81,5 +81,42 @@ namespace EmailLab {
       Console.WriteLine("[RECEIVED] {0} new emails", newCount);
       return newCount;
     }
+
+    public void DisplayInbox() {
+      if (inbox.Count == 0) {
+        Console.WriteLine("Inbox is empty");
+        return;
+      }
+
+      Console.WriteLine("\n=== INBOX ({0}) ===", inbox.Count);
+
+      for (int position = 0; position < inbox.Count; ++position) {
+        Email current = inbox[position];
+
+        string status;
+        if (current.IsRead) {
+          status = "[READ]";
+        } else {
+          status = "[NEW]";
+        }
+
+        Console.WriteLine("\n{0} Email #{1}", status, position + 1);
+        Console.WriteLine(current.ToString());
+      }
+    }
+
+    public void DisplaySentEmails() {
+      if (sentEmails.Count == 0) {
+        Console.WriteLine("No sent emails");
+        return;
+      }
+
+      Console.WriteLine("\n=== SENT ({0}) ===", sentEmails.Count);
+
+      for (int position = 0; position < sentEmails.Count; ++position) {
+        Console.WriteLine("\nEmail #{0}", position + 1);
+        Console.WriteLine(sentEmails[position].ToString());
+      }
+    }
   }
 }
