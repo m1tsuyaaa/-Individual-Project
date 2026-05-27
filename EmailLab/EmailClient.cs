@@ -118,5 +118,41 @@ namespace EmailLab {
         Console.WriteLine(sentEmails[position].ToString());
       }
     }
+
+    public void MarkEmailAsRead(int emailNumber) {
+      if (emailNumber >= 1 && emailNumber <= inbox.Count) {
+        inbox[emailNumber - 1].IsRead = true;
+        Console.WriteLine("Email #{0} marked as read", emailNumber);
+      } else {
+        Console.WriteLine("Invalid email number");
+      }
+    }
+
+    public void DisplayStatistics() {
+      int unreadCount = 0;
+
+      for (int position = 0; position < inbox.Count; ++position) {
+        if (!inbox[position].IsRead) {
+          ++unreadCount;
+        }
+      }
+
+      int total = inbox.Count + sentEmails.Count;
+
+      Console.WriteLine("\n=== STATISTICS ===");
+      Console.WriteLine("Total emails: {0}", total);
+      Console.WriteLine("Inbox: {0} (Unread: {1})", inbox.Count, unreadCount);
+      Console.WriteLine("Sent: {0}", sentEmails.Count);
+    }
+
+    public static void TestSingleton() {
+      EmailClient first = GetInstance();
+      EmailClient second = GetInstance();
+      Console.WriteLine("Singleton test: {0}", ReferenceEquals(first, second));
+    }
+
+    internal static void DemonstrateSingletonPattern() {
+      throw new NotImplementedException();
+    }
   }
 }
